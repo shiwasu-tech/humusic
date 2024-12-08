@@ -1,0 +1,12 @@
+numpy 
+matplotlib
+
+
+mido
+miditok
+
+pygame
+
+torch
+torchaudio
+torchvision
