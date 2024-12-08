@@ -9,4 +9,6 @@ wheels/
 # Virtual environments
 .venv
 
-/datasets
+/datasets/orchestra/*
+/datasets/piano1_only/*
+
