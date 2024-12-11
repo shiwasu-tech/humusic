@@ -10,3 +10,5 @@ pygame
 torch
 torchaudio
 torchvision
+
+transformers
