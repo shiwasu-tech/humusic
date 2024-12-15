@@ -12,3 +12,5 @@ torchaudio
 torchvision
 
 transformers
+
+tqdm

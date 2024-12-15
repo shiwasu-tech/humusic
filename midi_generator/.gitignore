@@ -1,4 +1,8 @@
 /models/*
 /midi_chunk/*
 /tokens/*
-/generated_midi/*
+/generated/*
+/prompt/*
+*.mid
+
+datasets_path.json
