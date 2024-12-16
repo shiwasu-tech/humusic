@@ -12,8 +12,8 @@ jsonからロード
 '''
 
 #モデルとプロンプトの選択
-model_path = "lstmwithatt_better_model_piano1_only"
-tokenizer_path = "tokens/piano1_token/tokenizer.json"
+model_name = "lstmwithatt_best"
+tokenizer_path = "piano1_tokens"
 prompt_name = "output"
 generation_length = 1000
 
@@ -23,19 +23,19 @@ torch.set_printoptions(edgeitems=torch.inf)
 #device setting
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def generate_midi(model_path, tokenizer_path, prompt_name, generation_length)->str:
+def generate_midi(model_name, tokenizer_name, prompt_name, generation_length)->str:
     #tokenizerの読み込み
-    tokenizer = REMI(params=Path(tokenizer_path))
+    tokenizer = REMI(params=Path("resources/tokenizers/" +tokenizer_name + "/tokenizer.json"))
 
     # mmodelの選択
     hidden_size = 200
     model = LSTMwithAtt(tokenizer, hidden_size)
 
-    model.load_state_dict(torch.load(Path("models/"+model_path+".pt")))
+    model.load_state_dict(torch.load(Path("resources/models/"+model_name+".pt")))
     model = model.to(device)
 
     #promptの読み込み
-    prompt_path = ("prompt/" + prompt_name + ".mid")
+    prompt_path = ("resources/prompts/" + prompt_name + ".mid")
 
     #promptのトークン化
     input_ids = torch.tensor([tokenizer(prompt_path)]).to(device)
@@ -50,7 +50,7 @@ def generate_midi(model_path, tokenizer_path, prompt_name, generation_length)->s
         x = model.input_emb(input_ids)
         ox, (hnx, cnx) = model.lstm1(x)
         hnx, cnx = hnx[:,0,:], cnx[:,0,:]
-        wid = input_ids[0][-1]
+        wid = input_ids[0][0]
         
         sl = 0
         while True:
@@ -80,12 +80,13 @@ def generate_midi(model_path, tokenizer_path, prompt_name, generation_length)->s
     generated = tokenizer.decode(gen_token)
     print("Generated MIDI Tokens:", generated)
 
-    genarated_midi = "generated/" + model_path + "_from_" + prompt_name + ".mid"
+    #genarated_midi = "resources/generated/" + model_name + "_from_" + prompt_name + ".mid"
+    genarated_midi = "resources/generated/generated.mid"
 
     generated.dump_midi(genarated_midi)
 
     return genarated_midi
 
 if __name__ == "__main__":
-    file_path = generate_midi(model_path, tokenizer_path, prompt_name, generation_length)
+    file_path = generate_midi(model_name, tokenizer_path, prompt_name, generation_length)
     print(file_path)
