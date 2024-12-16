@@ -1,0 +1,42 @@
+[
+    {
+        "name": "モデルA",
+        "path": "/path/to/modelA",
+        "variables": {
+            "var1": "value1",
+            "var2": "value2",
+            "speed": "100",
+            "duration": "10000"
+        }
+    },
+    {
+        "name": "モデルB",
+        "path": "/path/to/modelB",
+        "variables": {
+            "var1": "value1",
+            "var2": "value2",
+            "speed": "200",
+            "duration": "20000"
+        }
+    },
+    {
+        "name": "モデルC",
+        "path": "/path/to/modelC",
+        "variables": {
+            "var1": "value1",
+            "var2": "value2",
+            "speed": "300",
+            "duration": "30000"
+        }
+    },
+    {
+        "name": "モデルD",
+        "path": "/path/to/modelD",
+        "variables": {
+            "var1": "value1",
+            "var2": "value2",
+            "speed": "400",
+            "duration": "40000"
+        }
+    }
+]
