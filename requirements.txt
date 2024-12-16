@@ -1,9 +1,16 @@
-numpy 
+numpy == 1.26.4
 matplotlib
 
 
 mido
 miditok
+
+# used for hum2midi
+pyaudio
+pyworld
+setuptools
+librosa
+scipy
 
 pygame
 
