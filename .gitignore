@@ -10,10 +10,9 @@ wheels/
 .venv
 
 /datasets/orchestra/*
+/datasets/piano1orchestra/*
+/datasets/maestro-v3.0.0/*
 /datasets/piano1_only/*
 
-/path
-/library_test/path
 
-/midi_chunks
-/token
+.DS_Store

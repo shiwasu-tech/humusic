@@ -1,0 +1,8 @@
+/model_maker/models/*
+/model_maker/midi_chunk/*
+/model_maker/tokenizers/*
+/model_maker/generated/*
+/model_maker/prompt/*
+*.mid
+
+datasets_path.json
