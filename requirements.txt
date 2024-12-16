@@ -5,6 +5,14 @@ matplotlib
 mido
 miditok
 
+# used for hum2midi
+pyaudio
+pyworld
+setuptools
+librosa
+scipy
+
+
 pygame
 
 torch
