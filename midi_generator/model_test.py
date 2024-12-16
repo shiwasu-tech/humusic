@@ -12,7 +12,7 @@ jsonからロード
 '''
 
 #モデルとプロンプトの選択
-model_path = "lstmwithatt_200_piano1_only_100"
+model_path = "lstmwithatt_better_model_piano1_only.pt"
 tokenizer_path = "tokens/piano1_token/tokenizer.json"
 prompt_name = "output"
 generation_length = 1000
