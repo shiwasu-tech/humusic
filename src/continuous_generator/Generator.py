@@ -1,10 +1,12 @@
 import os
+import sys
 from pathlib import Path
 import json
 import torch
 import torch.nn.functional as F
 from miditok import REMI
 
+sys.path.append("src/continuous_generator")
 from LSTMwithAtt import LSTMwithAtt
 
 '''
@@ -12,30 +14,30 @@ jsonからロード
 '''
 
 #モデルとプロンプトの選択
-model_name = "lstmwithatt_best"
-tokenizer_path = "piano1_tokens"
-prompt_name = "output"
-generation_length = 1000
+model_path = "resources/models/lstmwithatt_best.pt"
+tokenizer_path = "resources/tokenizers/piano1_tokens/tokenizer.json"
+prompt_path = "inputs/output.mid"
+generation_length = 500
 
 #ベクトル表示の非短縮設定
 torch.set_printoptions(edgeitems=torch.inf)
 
-#device setting
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def generate_midi(model_path, tokenizer_path, prompt_path, generation_length)->str:
+    #device setting
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def generate_midi(model_name, tokenizer_name, prompt_name, generation_length)->str:
     #tokenizerの読み込み
-    tokenizer = REMI(params=Path("resources/tokenizers/" +tokenizer_name + "/tokenizer.json"))
+    tokenizer = REMI(params=Path(tokenizer_path))
 
     # mmodelの選択
     hidden_size = 200
     model = LSTMwithAtt(tokenizer, hidden_size)
 
-    model.load_state_dict(torch.load(Path("resources/models/"+model_name+".pt")))
+    model.load_state_dict(torch.load(Path(model_path), map_location=device))
     model = model.to(device)
 
     #promptの読み込み
-    prompt_path = ("resources/prompts/" + prompt_name + ".mid")
+    prompt_path = (Path(prompt_path))
 
     #promptのトークン化
     input_ids = torch.tensor([tokenizer(prompt_path)]).to(device)
@@ -88,5 +90,5 @@ def generate_midi(model_name, tokenizer_name, prompt_name, generation_length)->s
     return genarated_midi
 
 if __name__ == "__main__":
-    file_path = generate_midi(model_name, tokenizer_path, prompt_name, generation_length)
+    file_path = generate_midi(model_path, tokenizer_path, prompt_path, generation_length)
     print(file_path)
