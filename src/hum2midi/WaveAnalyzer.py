@@ -11,8 +11,7 @@ class WaveAnalyzer:
 
     Attributes:
         wave_path (str): 解析する音声データのパス
-        method (str): 解析手法の指定
-        
+        method (str): 解析手法の指定. "harvest"か"dio"を指定. Defaults to "harvest".
     """
 
     def __init__(self, wave_path: str, method: str = "harvest"):
@@ -22,9 +21,24 @@ class WaveAnalyzer:
             wave_path (str): 解析する音声データのパス
             method (str): 解析手法の指定. "harvest"か"dio"を指定. Defaults to "harvest".
         """
-        
         self.wave_path = wave_path
         self.method = method
+
+
+    def analyze_pitch_and_bpm(self) -> Tuple[np.ndarray, float, float]:
+        """wavファイルからピッチとBPMを取得するメソッド
+
+        Returns:
+            Tuple[np.ndarray, float, float]: ピッチのリスト、時間軸の間隔、BPM
+        
+        Note:
+            timeはピッチの時間軸の間隔である
+        """
+        f0_list, time = self.get_pitch()
+        bpm = self.get_bpm()
+
+        return f0_list, time, bpm
+
 
     def get_pitch(self) -> Tuple[np.ndarray, float]:
         """ピッチを取得するメソッド
@@ -38,7 +52,6 @@ class WaveAnalyzer:
         Note:
             ステレオ音源の場合は、平均値を振幅としたモノラル音源に変換される
         """
-        
         fs, data = wav.read(self.wave_path)
         data = data.astype(np.float64)
         if data.ndim >= 2:
@@ -58,6 +71,7 @@ class WaveAnalyzer:
 
         return f0_list, time
     
+
     def get_bpm(self) -> float:
         """BPMを取得するメソッド
 
@@ -66,7 +80,6 @@ class WaveAnalyzer:
         Returns:
             float: BPM
         """
-        
         data, fs = lr.load(self.wave_path)
         bpm, _ = lr.beat.beat_track(y=data, sr=fs)
 
@@ -74,6 +87,7 @@ class WaveAnalyzer:
             return bpm[0]
         else:
             return bpm
+
 
 if __name__ == "__main__":
     wa = WaveAnalyzer("resources/output.wav")
