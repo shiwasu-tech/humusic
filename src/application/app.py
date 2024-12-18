@@ -47,10 +47,10 @@ class MainApp(QWidget):
 
         self.setWindowTitle(_TITLE)
         self.setGeometry(
-            x = _WINDOW_X,
-            y = _WINDOW_Y,
-            w = _WINDOW_WIDTH,
-            h = _WINDOW_HEIGHT
+            _WINDOW_X,
+            _WINDOW_Y,
+            _WINDOW_WIDTH,
+            _WINDOW_HEIGHT
         )
 
         self.layout_main = QVBoxLayout()
@@ -64,6 +64,7 @@ class MainApp(QWidget):
         self.layout_generator = QVBoxLayout()
         self.layout_player = QVBoxLayout()
 
+        self.__init_UI()
 
 
     def __init_UI(self) -> None:
@@ -74,6 +75,8 @@ class MainApp(QWidget):
         self.layout_main.addLayout(self.layout_top)
         self.layout_main.addLayout(self.layout_body)
         self.layout_main.addLayout(self.layout_bottom)
+
+        self.setLayout(self.layout_main)
 
 
     def __init_top(self) -> None:
@@ -89,8 +92,10 @@ class MainApp(QWidget):
             IMG_HEIGHT,
             Qt.KeepAspectRatio
         )
-        img_label = QLabel(IMG_LABEL).setPixmap(pixmap)
-
+        print(pixmap)
+        img_label = QLabel(IMG_LABEL)
+        img_label.setPixmap(pixmap)
+        print(img_label)
         top_label = self.__create_label(
             label_text = _TITLE,
             font_size = TITLE_FONT_SIZE
@@ -111,16 +116,16 @@ class MainApp(QWidget):
     
     def __init_body(self) -> None:
         self.__init_recorder()
-        self.layout_body.addLayout(self.layout_recorder)
+        self.layout_body.addLayout(self.layout_recorder, stretch=1)
 
         self.__init_converter()
-        self.layout_body.addLayout(self.layout_converter)
+        self.layout_body.addLayout(self.layout_converter, stretch=1)
 
         self.__init_generator()
-        self.layout_body.addLayout(self.layout_generator)
+        self.layout_body.addLayout(self.layout_generator, stretch=1)
 
-        self.__init_player()
-        self.layout_body.addLayout(self.layout_player)
+        # self.__init_player()
+        # self.layout_body.addLayout(self.layout_player)
 
 
     def __init_recorder(self) -> None:
@@ -140,7 +145,7 @@ class MainApp(QWidget):
             default_value = _DEFAULT_REC_TIME,
             connect_method = self.__update_rec_sec_slider
         )
-        rec_button_label = self.__create_label(text = "録音の開始")
+        rec_button_label = self.__create_label(label_text = "録音の開始")
         rec_button = self.__create_button(
             text = "開始",
             height = 50,
@@ -148,7 +153,7 @@ class MainApp(QWidget):
             text_color = "white",
             connect_method = self.__start_recording
         )
-        preview_button_label = self.__create_label(text = "録音した音声の再生")
+        preview_button_label = self.__create_label(label_text = "録音した音声の再生")
         preview_button = self.__create_button(
             text = "再生",
             height = 50,
@@ -186,7 +191,7 @@ class MainApp(QWidget):
             font_size = CONVERTER_FONT_SIZE,
             alignment = Qt.AlignCenter
         )
-        convert_method_combobox_label = self.__create_label(text = METHOD_COMBOBOX_LABEL)
+        convert_method_combobox_label = self.__create_label(label_text = METHOD_COMBOBOX_LABEL)
         convert_method_combobox = self.__create_combobox(
             items = METHODS,
             connect_method = self.__update_convert_method
@@ -198,7 +203,7 @@ class MainApp(QWidget):
             text_color = "white",
             connect_method = self.__start_converting
         )
-        prompt_combobox_label = self.__create_label(text = PROMPT_COMBOBOX_LABEL)
+        prompt_combobox_label = self.__create_label(label_text = PROMPT_COMBOBOX_LABEL)
         prompt_combobox = self.__create_combobox(
             items = ["default"],
             connect_method = self.__update_convert_method
@@ -229,8 +234,63 @@ class MainApp(QWidget):
 
 
     def __init_generator(self) -> None:
+        GENERATOR_LABEL = "生成"
+        GENERATOR_FONT_SIZE = 20
+        GEN_NOTES_SLIDER_LABEL = f"生成ノート数: {_DEFAULT_GEN_NOTES}"
+        GEN_RANGE = (100, 1000)
+
+        generator_label = self.__create_label(
+            label_text = GENERATOR_LABEL,
+            font_size = GENERATOR_FONT_SIZE,
+            alignment = Qt.AlignCenter
+        )
+        model_combobox_label = self.__create_label(label_text = "モデルの選択")
+        model_combobox = self.__create_combobox(
+            items = ["default"],
+            connect_method = self.__update_gen_notes_slider
+        )
+        gen_notes_slider_label = self.__create_label(GEN_NOTES_SLIDER_LABEL)
+        gen_notes_slider = self.__create_slider(
+            orientation = Qt.Horizontal,
+            val_range = GEN_RANGE,
+            default_value = _DEFAULT_GEN_NOTES,
+            connect_method = self.__update_gen_notes_slider
+        )
+        gen_button = self.__create_button(
+            text = "生成",
+            height = 50,
+            button_color = "blue",
+            text_color = "white",
+            connect_method = self.__start_generating
+        )
+        play_data_combobox_label = self.__create_label(label_text = "再生するデータの選択")
+        play_data_combobox = self.__create_combobox(
+            items = ["default"],
+            connect_method = self.__update_gen_notes_slider
+        )
+        player_button = self.__create_button(
+            text = "再生",
+            height = 50,
+            button_color = "blue",
+            text_color = "white",
+            connect_method = self.__start_generating
+        )
+
+        self.layout_generator.addWidget(generator_label, alignment=Qt.AlignCenter)
+        self.layout_generator.addWidget(gen_notes_slider_label)
+        self.layout_generator.addWidget(gen_notes_slider)
+        self.layout_generator.addWidget(gen_button)
+        self.layout_generator.addWidget(model_combobox_label)
+        self.layout_generator.addWidget(model_combobox)
+        self.layout_generator.addWidget(play_data_combobox_label)
+        self.layout_generator.addWidget(play_data_combobox)
+        self.layout_generator.addWidget(player_button)
+
+    def __start_generating(self) -> None:
         pass
 
+    def __update_gen_notes_slider(self) -> None:
+        pass
 
     def __init_player(self) -> None:
         pass
@@ -299,3 +359,10 @@ class MainApp(QWidget):
         combobox.addItems(items)
         combobox.activated.connect(connect_method)
         return combobox
+    
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    main_app = MainApp()
+    main_app.show()
+    sys.exit(app.exec())
