@@ -6,7 +6,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap
-from hello import async_function, hello_world
 
 sys.path.append("src")
 sys.path.append("src/hum2midi")
@@ -413,7 +412,6 @@ class MainApp(QWidget):
     ##############
     async def start_async_function(self, duration):
         """非同期関数を実行する"""
-        await async_function(duration)
 
         
 
