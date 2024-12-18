@@ -1,5 +1,6 @@
 import sys
 import json
+from functools import partial
 from PySide6.QtWidgets import (
     QApplication,
     QFrame,
@@ -32,334 +33,416 @@ _GEN_MIDI_PATH = "resources/generated/generated_best.mid"
 
 _LOGO_PATH = "src/application/logo_1.png"
 
-_DEFALUT_REC_RANGE = (1, 20)
 _DEFAULT_REC_TIME = 5
-_DEFAULT_GEN_NOTES = 500
-
-_WINDOW_X = 100
-_WINDOW_Y = 100
-_WINDOW_WIDTH = 850
-_WINDOW_HEIGHT = 500
+_DEFAULT_CONVERT_METHOD = "harvest"
+_DEFAULT_NOTE_NUM = 500
 
 class MainApp(QWidget):
     def __init__(self):
         super().__init__()
+        # 秒数、変換手法、生成モデルを保持するインスタンス変数
+        self.rec_time = _DEFAULT_REC_TIME
+        self.convert_method = _DEFAULT_CONVERT_METHOD
+        self.model = ""
+        self.note_num = _DEFAULT_NOTE_NUM
+        # メソッド多重呼び出し防止フラグ
+        self.is_processing = False
+        # layoutのインスタンスオブジェクトを生成
+        self.main_layout = QVBoxLayout()
+        self.top_layout = QHBoxLayout()
+        self.body_layout = QHBoxLayout()
+        self.bottom_layout = QHBoxLayout()
 
-        self.setWindowTitle(_TITLE)
-        self.setGeometry(
-            _WINDOW_X,
-            _WINDOW_Y,
-            _WINDOW_WIDTH,
-            _WINDOW_HEIGHT
-        )
-
-        self.layout_main = QVBoxLayout()
-
-        self.layout_top = QHBoxLayout()
-        self.layout_body = QHBoxLayout()
-        self.layout_bottom = QHBoxLayout()
-
-        self.layout_recorder = QVBoxLayout()
-        self.layout_converter = QVBoxLayout()
-        self.layout_generator = QVBoxLayout()
-        self.layout_player = QVBoxLayout()
-
+        self.recorder_layout = QVBoxLayout()
+        self.converter_layout = QVBoxLayout()
+        self.generator_layout = QVBoxLayout()
+        # uiの初期化
         self.__init_UI()
 
-
-    def __init_UI(self) -> None:
+    
+    def __init_UI(self):
+        pass
+        # 定数の初期化
+        WINDOW_X = 100
+        WINDOW_Y = 100
+        WINDOW_WIDTH = 800
+        WINDOW_HEIGHT = 450
+        # ウインドウの設定
+        self.setWindowTitle(_TITLE)
+        self.setGeometry(
+            WINDOW_X,
+            WINDOW_Y,
+            WINDOW_WIDTH,
+            WINDOW_HEIGHT
+        )
+        # 各layoutの初期化
         self.__init_top()
         self.__init_body()
         self.__init_bottom()
+        self.main_layout.addLayout(self.top_layout)
+        self.main_layout.addWidget(self.__init_line())
+        self.main_layout.addLayout(self.body_layout)
+        self.main_layout.addWidget(self.__init_line())
+        self.main_layout.addLayout(self.bottom_layout)
+        # layoutのセット
+        self.setLayout(self.main_layout)
 
-        self.layout_main.addLayout(self.layout_top)
-        self.layout_main.addLayout(self.layout_body)
-        self.layout_main.addLayout(self.layout_bottom)
 
-        self.setLayout(self.layout_main)
-
-
-    def __init_top(self) -> None:
-        IMG_LABEL = "logo"
-        IMG_WIDTH = 50
-        IMG_HEIGHT = 50
-        TITLE_FONT_SIZE = 24
-        STRETCH = 1
-        LINE_WIDTH = 4
-
-        pixmap = QPixmap(_LOGO_PATH).scaled(
-            IMG_WIDTH,
-            IMG_HEIGHT,
-            Qt.KeepAspectRatio
+    def __init_top(self):
+        # 定数の初期化
+        LOGO_WIDTH = 50
+        LOGO_HEIGHT = 50
+        # ロゴの設定
+        logo_label = self.__init_pixmap(
+            pixmap_path =_LOGO_PATH,
+            width = LOGO_WIDTH,
+            height = LOGO_HEIGHT
         )
-        print(pixmap)
-        img_label = QLabel(IMG_LABEL)
-        img_label.setPixmap(pixmap)
-        print(img_label)
-        top_label = self.__create_label(
-            label_text = _TITLE,
-            font_size = TITLE_FONT_SIZE
+        # タイトルの設定
+        title_label = self.__init_label(
+            text = _TITLE,
+            font_size = 24
         )
-        index_label = self.__create_label(_SUBTITLE)
-
-        line = self.__create_line(
-            width = LINE_WIDTH,
-            color = "black"
+        # サブタイトルの設定
+        subtitle_label = self.__init_label(
+            text = "\n" + _SUBTITLE,
+            font_size = 10
         )
+        # lineの設定
+        line = self.__init_line()
 
-        self.layout_top.addWidget(img_label)
-        self.layout_top.addWidget(top_label)
-        self.layout_top.addWidget(index_label)
-        self.layout_top.addStretch(STRETCH)
-        self.layout_top.addWidget(line)
+        self.top_layout.addWidget(logo_label)
+        self.top_layout.addWidget(title_label)
+        self.top_layout.addWidget(subtitle_label)
+        # layoutを改行してからlineを追加
+        self.top_layout.addStretch()
+        self.top_layout.addWidget(line)
 
-    
-    def __init_body(self) -> None:
+
+
+
+    def __init_body(self):
+        # 定数の初期化
+        # 子のlayoutの初期化
         self.__init_recorder()
-        self.layout_body.addLayout(self.layout_recorder, stretch=1)
-
         self.__init_converter()
-        self.layout_body.addLayout(self.layout_converter, stretch=1)
-
         self.__init_generator()
-        self.layout_body.addLayout(self.layout_generator, stretch=1)
+        # layoutのセット
+        self.body_layout.addLayout(self.recorder_layout, stretch=1)
+        self.body_layout.addLayout(self.converter_layout, stretch=1)
+        self.body_layout.addLayout(self.generator_layout, stretch=1)
 
-        # self.__init_player()
-        # self.layout_body.addLayout(self.layout_player)
+
+    def __init_bottom(self):
+        pass
+        # 定数の初期化
+        # なんかテキストの設定
 
 
-    def __init_recorder(self) -> None:
-        REC_LABEL = "録音"
-        REC_FONT_SIZE = 20
-        REC_SEC_SLIDER_LABEL = f"録音時間: {_DEFAULT_REC_TIME}秒"
-
-        rec_label = self.__create_label(
-            label_text = REC_LABEL,
-            font_size = REC_FONT_SIZE,
+    def __init_recorder(self):
+        # 定数の初期化
+        HEAD_FONT_SIZE = 20
+        REC_TIME_RANGE = (1, 20)
+        # 大きめのラベルの設定
+        head_label = self.__init_label(
+            text = "録音",
+            font_size = HEAD_FONT_SIZE,
             alignment = Qt.AlignCenter
         )
-        rec_sec_slider_label = self.__create_label(REC_SEC_SLIDER_LABEL)
-        rec_sec_slider = self.__create_slider(
-            orientation = Qt.Horizontal,
-            val_range = _DEFALUT_REC_RANGE,
+        # 録音時間のスライダーの設定
+        rec_time_label = self.__init_label(
+            text = f"録音時間: {_DEFAULT_REC_TIME}秒"
+        )
+        rec_time_slider = self.__init_slider(
+            range = REC_TIME_RANGE,
             default_value = _DEFAULT_REC_TIME,
-            connect_method = self.__update_rec_sec_slider
+            connect_method = partial(self.__update_rec_time, rec_time_label)
         )
-        rec_button_label = self.__create_label(label_text = "録音の開始")
-        rec_button = self.__create_button(
-            text = "開始",
-            height = 50,
-            button_color = "blue",
-            text_color = "white",
-            connect_method = self.__start_recording
+        # 録音ボタンの設定
+        rec_button_label = self.__init_label(
+            text = "録音ボタン"
         )
-        preview_button_label = self.__create_label(label_text = "録音した音声の再生")
-        preview_button = self.__create_button(
+        rec_button = self.__init_button(
+            text = "録音",
+            connect_method = self.__record_wave
+        )
+        # 再生ボタンの設定
+        play_button_label = self.__init_label(
+            text = "再生ボタン"
+        )
+        play_button = self.__init_button(
             text = "再生",
-            height = 50,
-            button_color = "blue",
-            text_color = "white",
-            connect_method = self.__start_recording
+            connect_method = self.__play_wave
         )
 
-        self.layout_recorder.addWidget(rec_label, alignment=Qt.AlignCenter)
-        self.layout_recorder.addWidget(rec_sec_slider_label)
-        self.layout_recorder.addWidget(rec_sec_slider)
-        self.layout_recorder.addWidget(rec_button_label)
-        self.layout_recorder.addWidget(rec_button)
-        self.layout_recorder.addWidget(preview_button_label)
-        self.layout_recorder.addWidget(preview_button)
+        self.recorder_layout.addWidget(head_label)
+        self.recorder_layout.addWidget(rec_time_label)
+        self.recorder_layout.addWidget(rec_time_slider)
+        self.recorder_layout.addWidget(rec_button_label)
+        self.recorder_layout.addWidget(rec_button)
+        self.recorder_layout.addWidget(play_button_label)
+        self.recorder_layout.addWidget(play_button)
 
-
-    def __update_rec_sec_slider(self) -> None:
-        pass
-
-
-    def __start_recording(self) -> None:
-        pass
-
-
-    def __init_converter(self) -> None:
-        CONVERTER_LABEL = "変換"
-        CONVERTER_FONT_SIZE = 20
-        METHOD_COMBOBOX_LABEL = "変換手法の選択"
-        METHODS = ["harvest(default)", "dio+stonemask"]
-        PROMPT_COMBOBOX_LABEL = "プロンプトの選択"
-
-        converter_label = self.__create_label(
-            label_text = CONVERTER_LABEL,
-            font_size = CONVERTER_FONT_SIZE,
-            alignment = Qt.AlignCenter
-        )
-        convert_method_combobox_label = self.__create_label(label_text = METHOD_COMBOBOX_LABEL)
-        convert_method_combobox = self.__create_combobox(
-            items = METHODS,
-            connect_method = self.__update_convert_method
-        )
-        convert_button = self.__create_button(
+    def __init_converter(self):
+        # 定数の初期化
+        HEAD_FONT_SIZE = 20
+        # 大きめのラベルの設定
+        head_label = self.__init_label(
             text = "変換",
-            height = 50,
-            button_color = "blue",
-            text_color = "white",
-            connect_method = self.__start_converting
-        )
-        prompt_combobox_label = self.__create_label(label_text = PROMPT_COMBOBOX_LABEL)
-        prompt_combobox = self.__create_combobox(
-            items = ["default"],
-            connect_method = self.__update_convert_method
-        )
-        player_button = self.__create_button(
-            text = "再生",
-            height = 50,
-            button_color = "blue",
-            text_color = "white",
-            connect_method = self.__start_converting
-        )
-
-        self.layout_converter.addWidget(converter_label, alignment=Qt.AlignCenter)
-        self.layout_converter.addWidget(convert_method_combobox_label)
-        self.layout_converter.addWidget(convert_method_combobox)
-        self.layout_converter.addWidget(convert_button)
-        self.layout_converter.addWidget(prompt_combobox_label)
-        self.layout_converter.addWidget(prompt_combobox)
-        self.layout_converter.addWidget(player_button)
-        
-
-
-    def __update_convert_method(self) -> None:
-        pass
-
-    def __start_converting(self) -> None:
-        pass
-
-
-    def __init_generator(self) -> None:
-        GENERATOR_LABEL = "生成"
-        GENERATOR_FONT_SIZE = 20
-        GEN_NOTES_SLIDER_LABEL = f"生成ノート数: {_DEFAULT_GEN_NOTES}"
-        GEN_RANGE = (100, 1000)
-
-        generator_label = self.__create_label(
-            label_text = GENERATOR_LABEL,
-            font_size = GENERATOR_FONT_SIZE,
+            font_size = HEAD_FONT_SIZE,
             alignment = Qt.AlignCenter
         )
-        model_combobox_label = self.__create_label(label_text = "モデルの選択")
-        model_combobox = self.__create_combobox(
-            items = ["default"],
-            connect_method = self.__update_gen_notes_slider
+        # 変換手法の選択コンボボックスの設定
+        convert_method_label = self.__init_label(
+            text = "ピッチ解析手法"
         )
-        gen_notes_slider_label = self.__create_label(GEN_NOTES_SLIDER_LABEL)
-        gen_notes_slider = self.__create_slider(
-            orientation = Qt.Horizontal,
-            val_range = GEN_RANGE,
-            default_value = _DEFAULT_GEN_NOTES,
-            connect_method = self.__update_gen_notes_slider
+        convert_method_combobox = self.__init_combobox(
+            items = ["harvest", "dio+stonemask"],  # 仮置
+            connect_method = self.__update_method
         )
-        gen_button = self.__create_button(
-            text = "生成",
-            height = 50,
-            button_color = "blue",
-            text_color = "white",
-            connect_method = self.__start_generating
+        # 変換ボタンの設定
+        convert_button_label = self.__init_label(
+            text = "変換ボタン"
         )
-        play_data_combobox_label = self.__create_label(label_text = "再生するデータの選択")
-        play_data_combobox = self.__create_combobox(
-            items = ["default"],
-            connect_method = self.__update_gen_notes_slider
+        convert_button = self.__init_button(
+            text = "変換",
+            connect_method = self.__convert_wave_to_midi
         )
-        player_button = self.__create_button(
+        # 再生ファイル選択コンボボックスの設定
+        play_file_label = self.__init_label(
+            text = "再生ファイル"
+        )
+        play_file_combobox = self.__init_combobox(
+            items = ["input.mid"],  # 仮置
+            connect_method = self.__update_prompt_midi
+        )
+        # 再生ボタンの設定
+        play_button_label = self.__init_label(
+            text = "再生ボタン"
+        )
+        play_button = self.__init_button(
             text = "再生",
-            height = 50,
-            button_color = "blue",
-            text_color = "white",
-            connect_method = self.__start_generating
+            connect_method = self.__play_wave  # 仮置(実際はmidiを再生)
         )
 
-        self.layout_generator.addWidget(generator_label, alignment=Qt.AlignCenter)
-        self.layout_generator.addWidget(gen_notes_slider_label)
-        self.layout_generator.addWidget(gen_notes_slider)
-        self.layout_generator.addWidget(gen_button)
-        self.layout_generator.addWidget(model_combobox_label)
-        self.layout_generator.addWidget(model_combobox)
-        self.layout_generator.addWidget(play_data_combobox_label)
-        self.layout_generator.addWidget(play_data_combobox)
-        self.layout_generator.addWidget(player_button)
+        self.converter_layout.addWidget(head_label)
+        self.converter_layout.addWidget(convert_method_label)
+        self.converter_layout.addWidget(convert_method_combobox)
+        self.converter_layout.addWidget(convert_button_label)
+        self.converter_layout.addWidget(convert_button)
+        self.converter_layout.addWidget(play_file_label)
+        self.converter_layout.addWidget(play_file_combobox)
+        self.converter_layout.addWidget(play_button_label)
+        self.converter_layout.addWidget(play_button)
 
-    def __start_generating(self) -> None:
+
+    def __init_generator(self):
         pass
+        # 定数の初期化
+        HEAD_FONT_SIZE = 20
+        NOTE_NUM_RANGE = (100, 1000)
+        # 大きめのラベルの設定
+        head_label = self.__init_label(
+            text = "生成",
+            font_size = HEAD_FONT_SIZE,
+            alignment = Qt.AlignCenter
+        )
+        # 生成モデルの選択コンボボックスの設定
+        model_label = self.__init_label(
+            text = "生成モデル"
+        )
+        model_combobox = self.__init_combobox(
+            items = ["lstmwithatt"],  # 仮置
+            connect_method = self.__update_model
+        )
+        # 生成ノート数のスライダーの設定
+        generate_note_label = self.__init_label(
+            text = f"生成ノート数: {_DEFAULT_NOTE_NUM}"
+        )
+        generate_note_slider = self.__init_slider(
+            range = NOTE_NUM_RANGE,
+            default_value = _DEFAULT_NOTE_NUM,
+            connect_method = partial(self.__update_note_num, generate_note_label)
+        )
+        # 生成ボタンの設定
+        generate_button_label = self.__init_label(
+            text = "生成ボタン"
+        )
+        generate_button = self.__init_button(
+            text = "生成",
+            connect_method = self.__generate_continuation_midi
+        )
+        # 再生ファイル選択コンボボックスの設定
+        play_file_label = self.__init_label(
+            text = "再生ファイル"
+        )
+        play_file_combobox = self.__init_combobox(
+            items = ["generated.mid"],  # 仮置
+            connect_method = self.__update_gen_midi
+        )
+        # 再生ボタンの設定
+        play_button_label = self.__init_label(
+            text = "再生ボタン"
+        )
+        play_button = self.__init_button(
+            text = "再生",
+            connect_method = self.__play_wave  # 仮置(実際はmidiを再生)
+        )
+        
+        self.generator_layout.addWidget(head_label)
+        self.generator_layout.addWidget(model_label)
+        self.generator_layout.addWidget(model_combobox)
+        self.generator_layout.addWidget(generate_note_label)
+        self.generator_layout.addWidget(generate_note_slider)
+        self.generator_layout.addWidget(generate_button_label)
+        self.generator_layout.addWidget(generate_button)
+        self.generator_layout.addWidget(play_file_label)
+        self.generator_layout.addWidget(play_file_combobox)
+        self.generator_layout.addWidget(play_button_label)
+        self.generator_layout.addWidget(play_button)
 
-    def __update_gen_notes_slider(self) -> None:
-        pass
-
-    def __init_player(self) -> None:
-        pass
-
-
-    def __init_bottom(self) -> None:
-        pass
 
     @staticmethod
-    def __create_label(
-        label_text: str,
-        font_size: int = None,
-        alignment: Qt.AlignmentFlag = None,
-
+    def __init_pixmap(
+            pixmap_path: str,
+            width: int = None,
+            height: int = None
     ) -> QLabel:
-        label = QLabel(label_text)
+        img_label = QLabel()
+        pixmap = QPixmap(pixmap_path)
+        if width and height:
+            img_label.setPixmap(pixmap.scaled(width, height))
+        else:
+            img_label.setPixmap(pixmap)
+        
+        return img_label
+    
+
+    @staticmethod
+    def __init_label(
+            text: str,
+            font_size: int = None,
+            alignment: Qt.AlignmentFlag = None
+    ) -> QLabel:
+        label = QLabel(text)
         if font_size:
             label.setStyleSheet(f"font-size: {font_size}px;")
         if alignment:
             label.setAlignment(alignment)
+
         return label
-    
-    @staticmethod
-    def __create_slider(
-        orientation: Qt.Orientation,
-        val_range: tuple[int, int],
-        default_value: int,
-        connect_method: callable
-    ) -> QSlider:
-        slider = QSlider(orientation)
-        slider.setRange(*val_range)
-        slider.setValue(default_value)
-        slider.valueChanged.connect(connect_method)
-        return slider
-    
-    @staticmethod
-    def __create_button(
-        text: str,
-        height: int,
-        button_color: str,
-        text_color: str,
-        connect_method: callable
-    ) -> QPushButton:
-        button = QPushButton(text)
-        button.setFixedHeight(height)
-        button.clicked.connect(connect_method)
-        button.setStyleSheet(
-            f"background-color: {button_color}; color: {text_color};"
-        )
-        return button
+
 
     @staticmethod
-    def __create_line(width: int, color: str) -> QFrame:
-        line = QFrame()
-        line.setStyleSheet(f"border: {width}px solid {color};")
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        return line
+    def __init_slider(
+            range: tuple[int, int],
+            default_value: int,
+            connect_method: callable,
+            orientation: Qt.Orientation = Qt.Horizontal
+    ) -> QSlider:
+        slider = QSlider(orientation)
+        slider.setRange(*range)
+        slider.setValue(default_value)
+        slider.valueChanged.connect(connect_method)
+
+        return slider
     
+
     @staticmethod
-    def __create_combobox(
-        items: list[str],
-        connect_method: callable
+    def __init_combobox(
+            items: list[str],
+            connect_method: callable,
+            default_index: int = 0
     ) -> QComboBox:
         combobox = QComboBox()
         combobox.addItems(items)
-        combobox.activated.connect(connect_method)
+        combobox.setCurrentIndex(default_index)
+        combobox.currentIndexChanged.connect(connect_method)
+
         return combobox
-    
+
+
+    @staticmethod
+    def __init_button(
+            text: str,
+            connect_method: callable,
+            height: int = 50,
+            text_color: str = "#ffffff",
+            background_color: str = "#333"
+    ) -> QPushButton:
+        button = QPushButton(text)
+        button.setFixedHeight(height)
+        button.setStyleSheet(
+            f"color: {text_color}; background-color: {background_color};"
+        )
+        button.clicked.connect(connect_method)
+
+        return button
+
+
+    @staticmethod
+    def __init_line(
+            width: int = 4,
+            color: str = "#000",
+            orientation: Qt.Orientation = Qt.Horizontal
+    ) -> QFrame:
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        line.setLineWidth(width)
+        line.setStyleSheet(f"color: {color};")
+
+        return line
+
+
+    def __update_rec_time(self, label: QLabel, value: int):
+        # ラベルの更新
+        # valueはスライダーの値
+        label.setText(f"録音時間: {value}秒")
+        self.rec_time = value
+
+
+    def __record_wave(self):
+        pass
+        # 録音を行う
+        # selfから録音時間を取得
+
+    def __convert_wave_to_midi(self):
+        pass
+        # 変換を行う
+        # selfから変換手法を取得
+
+    def __generate_continuation_midi(self):
+        pass
+        # 生成を行う
+        # selfから生成モデルを取得
+
+    def __play_wave(self):
+        pass
+        # 録音した音声を再生する
+
+    def __update_method(self):
+        pass
+        # コンボボックスの選択肢をselfへ更新
+
+    def __update_prompt_midi(self):
+        pass
+        # コンボボックスの選択肢をselfへ更新
+
+    def __update_model(self):
+        pass
+        # コンボボックスの選択肢をselfへ更新
+
+    def __update_note_num(self, label: QLabel, value: int):
+        # ラベルの更新
+        # valueはスライダーの値
+        label.setText(f"生成ノート数: {value}")
+        self.note_num = value
+
+    def __update_gen_midi(self):
+        pass
+        # コンボボックスの選択肢をselfへ更新
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
