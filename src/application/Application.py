@@ -16,7 +16,8 @@ from MidPlayer import play_mid
 ''''''#iitai宛のコメントアウトはこの形式
 ''''''#下に使用するclassや関数を追加
 ''''''#インスタンス化はmainapp内で行う方が楽かも
-import hum2midi.Recorder as Recorder
+from hum2midi.Recorder import Recorder
+from hum2midi.Wave2MidiConverter import Wave2MidiConverter
 from continuous_generator.Generator import generate_midi
 
 
@@ -40,8 +41,8 @@ class MainApp(QWidget):
         
         
         ''''''#基本的に保存先は以下のパスに追加
-        self.rec_wav_path = "rerources/inputs/output.wav"
-        self.prompt_path = "resources/inputs/output.mid"
+        self.rec_wav_path = "rerources/inputs/input.wav"
+        self.prompt_path = "resources/inputs/input.mid"
         self.model_path = "resources/models/lstmwithatt_best.pt"
         self.tokenizer_path = "resources/tokenizers/piano1_tokens/tokenizer.json"
         self.gen_midi_path = "resources/generated/generated_best.mid"
@@ -281,6 +282,9 @@ class MainApp(QWidget):
         """録音した音声をmidiに変換する"""
 
         ''''''#録音した音声をmidiに変換する関数を記入
+        w2m = Wave2MidiConverter(wave_path=self.rec_wav_path, output_path=self.prompt_path)
+        w2m.create_midi()
+        del w2m
         #convert_function()
         self.status_label.setText("Status: 音声をmidiに変換しました。")
 
