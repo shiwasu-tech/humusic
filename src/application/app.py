@@ -90,16 +90,17 @@ class MainApp(QWidget):
             Qt.KeepAspectRatio
         )
         img_label = QLabel(IMG_LABEL).setPixmap(pixmap)
-        top_label = QLabel(_TITLE).setStyleSheet(
-            f"font-size: {TITLE_FONT_SIZE}px;"
-        )
-        index_label = QLabel(_SUBTITLE)
 
-        line = QFrame().setStyleSheet(
-            f"border: {LINE_WIDTH}px solid black;"
-            )
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
+        top_label = self.__create_label(
+            label_text = _TITLE,
+            font_size = TITLE_FONT_SIZE
+        )
+        index_label = self.__create_label(_SUBTITLE)
+
+        line = self.__create_line(
+            width = LINE_WIDTH,
+            color = "black"
+        )
 
         self.layout_top.addWidget(img_label)
         self.layout_top.addWidget(top_label)
@@ -127,22 +128,45 @@ class MainApp(QWidget):
         REC_FONT_SIZE = 20
         REC_SEC_SLIDER_LABEL = f"録音時間: {_DEFAULT_REC_TIME}秒"
 
-        rec_label = QLabel(REC_LABEL).setStyleSheet(
-            f"font-size: {REC_FONT_SIZE}px; text-align: center;"
+        rec_label = self.__create_label(
+            label_text = REC_LABEL,
+            font_size = REC_FONT_SIZE,
+            alignment = Qt.AlignCenter
         )
-
-        rec_sec_slider_label = QLabel(REC_SEC_SLIDER_LABEL)
-        rec_sec_slider = QSlider(Qt.Horizontal)
-        rec_sec_slider.setRange(*_DEFALUT_REC_RANGE)
-        rec_sec_slider.setValue(_DEFAULT_REC_TIME)
-        rec_sec_slider.valueChanged.connect(
-            self.__update_rec_sec_slider
+        rec_sec_slider_label = self.__create_label(REC_SEC_SLIDER_LABEL)
+        rec_sec_slider = self.__create_slider(
+            orientation = Qt.Horizontal,
+            val_range = _DEFALUT_REC_RANGE,
+            default_value = _DEFAULT_REC_TIME,
+            connect_method = self.__update_rec_sec_slider
+        )
+        rec_button = self.__create_button(
+            text = "開始",
+            height = 50,
+            button_color = "blue",
+            text_color = "white",
+            connect_method = self.__start_recording
+        )
+        preview_button = self.__create_button(
+            text = "再生",
+            height = 50,
+            button_color = "blue",
+            text_color = "white",
+            connect_method = self.__start_recording
         )
 
         self.layout_recorder.addWidget(rec_label, alignment=Qt.AlignCenter)
+        self.layout_recorder.addWidget(rec_sec_slider_label)
+        self.layout_recorder.addWidget(rec_sec_slider)
+        self.layout_recorder.addWidget(rec_button)
+        self.layout_recorder.addWidget(preview_button)
 
 
     def __update_rec_sec_slider(self) -> None:
+        pass
+
+
+    def __start_recording(self) -> None:
         pass
 
 
