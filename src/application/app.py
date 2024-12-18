@@ -222,7 +222,7 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_wave  # 仮置(実際はmidiを再生)
+            connect_method = self.__play_midi
         )
 
         self.converter_layout.addWidget(head_label)
@@ -286,7 +286,7 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_wave  # 仮置(実際はmidiを再生)
+            connect_method = self.__play_midi
         )
         
         self.generator_layout.addWidget(head_label)
@@ -403,23 +403,37 @@ class MainApp(QWidget):
 
 
     def __record_wave(self):
-        pass
+        if self.__check_processing():
+            return
         # 録音を行う
         # selfから録音時間を取得
+        self.__exit_process()
 
     def __convert_wave_to_midi(self):
-        pass
+        if self.__check_processing():
+            return
         # 変換を行う
         # selfから変換手法を取得
+        self.__exit_process()
 
     def __generate_continuation_midi(self):
-        pass
+        if self.__check_processing():
+            return
         # 生成を行う
         # selfから生成モデルを取得
+        self.__exit_process()
 
     def __play_wave(self):
-        pass
+        if self.__check_processing():
+            return
         # 録音した音声を再生する
+        self.__exit_process()
+
+    def __play_midi(self):
+        if self.__check_processing():
+            return
+        # 生成したmidiを再生する
+        self.__exit_process()
 
     def __update_method(self):
         pass
@@ -442,6 +456,17 @@ class MainApp(QWidget):
     def __update_gen_midi(self):
         pass
         # コンボボックスの選択肢をselfへ更新
+
+
+    def __check_processing(self) -> bool:
+        if self.is_processing:
+            return True
+        else:
+            self.is_processing = True
+            return False
+        
+    def __exit_process(self):
+        self.is_processing = False
 
 
 if __name__ == "__main__":
