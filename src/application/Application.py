@@ -79,8 +79,19 @@ class MainApp(QWidget):
         main_layout.addLayout(top_layout)
         main_layout.addWidget(line)  # 線を追加
 
+
+
+
+
+
         # メインレイアウトに横長のレイアウトと3分割のレイアウトを追加
         main_layout.addLayout(top_layout)  # 横長のレイアウトを追加
+        
+
+
+
+
+
         
         middle_layout = QHBoxLayout()  # 全体の横レイアウト
         recording_layout = QVBoxLayout()  # 録音部分（左）の縦レイアウト
