@@ -12,8 +12,7 @@ setuptools
 librosa
 scipy
 
-pygame
-
+# used for continuous_generator
 torch
 torchaudio
 torchvision
@@ -21,3 +20,7 @@ torchvision
 transformers
 
 tqdm
+
+# used for application
+pygame
+PySide6
