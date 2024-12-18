@@ -1,37 +1,52 @@
-# jsonにおけるパスの指定方法
+# Humor
+## HUMming cOntinuous generatOr
 
-生成用スクリプトがあるディレクトリ内に以下の形式でpathを保存したjsonを作成する必要があります．
+鼻歌を録音し，midiに変換したのち，フリーのmidiを学習させたモデルに鼻歌midinの続きを生成させる．というプロジェクトです．<br>
+第2回 C0deハッカソン with pixivにて作成しました．
 
-```json
-{   
-    "Darwin": {
-        "dataset_name": {
-            "dataset_dir" : "full path to dataset directry(EX: /datasets/xx, NOT /datasets)",
-            "tokenizer_path" : "full path to save tokenizer",
-            "chunks_dir" : "full path to save formatted dataset"
-        }
-    },
-    "Windows": {
-        "dataset1_name": {
-            "dataset_dir" : "C:/Users/...",
-            "tokenizer_path" : "...",
-            "chunks_dir" : "..."
-        },
-        "dataset2_name": {
-            "dataset_dir" : "C:/Users/...",
-            "tokenizer_path" : "...",
-            "chunks_dir" : "..."
-        }
-    }
-}
+## 実行方法
+
+uvで一括管理しているので，uvをインストールすると簡単です．<br>
+また，pythonの音響系ライブラリを使用しているため，portaudioを事前にインストールしてある必要があります．
+
+上記のが完了した後
+```humusic/```ディレクトリ内で，以下のコマンドを実行することで実行環境を構築．
+```bash
+uv sync
+uv add -r requirements.txt
+```
+
+```humuic/```ディレクトリ内で，以下のコマンドを実行すれば，アプリケーションが起動します．
+```bash
+uv run -m /src
+```
+
+
+
+## ディレクトリ構成
+```
+humusic/
+├─ src/
+│├─ hum2midi/
+│├─ continuous_generator/
+│└─ application/
+├─ resources/
+├─ model_maker/
+├─ README.md
+├─ .gitignore
+├─ .python-verion
+├─ pyproject.toml
+├─ reqirements.txt
+└─ uv.lock
 ```
 
 
 
 
-dataset from "maestro-v3.0.0"
+## 使用したデータセットの帰属表示
+> ### "Classical Piano Midi"
+> Name : Bernd Krueger<br>
+> Source : http://www.piano-midi.de<br>
+> LICENCE : CC-BY-SA Germaniy License.<br>
+> https://creativecommons.org/licenses/by-sa/3.0/de/deed.en
 
-Curtis Hawthorne, Andriy Stasyuk, Adam Roberts, Ian Simon, Cheng-Zhi Anna Huang,
-  Sander Dieleman, Erich Elsen, Jesse Engel, and Douglas Eck. "Enabling
-  Factorized Piano Music Modeling and Generation with the MAESTRO Dataset."
-  In International Conference on Learning Representations, 2019.
