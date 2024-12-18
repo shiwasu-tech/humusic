@@ -140,6 +140,7 @@ class MainApp(QWidget):
             default_value = _DEFAULT_REC_TIME,
             connect_method = self.__update_rec_sec_slider
         )
+        rec_button_label = self.__create_label(text = "録音の開始")
         rec_button = self.__create_button(
             text = "開始",
             height = 50,
@@ -147,6 +148,7 @@ class MainApp(QWidget):
             text_color = "white",
             connect_method = self.__start_recording
         )
+        preview_button_label = self.__create_label(text = "録音した音声の再生")
         preview_button = self.__create_button(
             text = "再生",
             height = 50,
@@ -158,7 +160,9 @@ class MainApp(QWidget):
         self.layout_recorder.addWidget(rec_label, alignment=Qt.AlignCenter)
         self.layout_recorder.addWidget(rec_sec_slider_label)
         self.layout_recorder.addWidget(rec_sec_slider)
+        self.layout_recorder.addWidget(rec_button_label)
         self.layout_recorder.addWidget(rec_button)
+        self.layout_recorder.addWidget(preview_button_label)
         self.layout_recorder.addWidget(preview_button)
 
 
@@ -171,6 +175,56 @@ class MainApp(QWidget):
 
 
     def __init_converter(self) -> None:
+        CONVERTER_LABEL = "変換"
+        CONVERTER_FONT_SIZE = 20
+        METHOD_COMBOBOX_LABEL = "変換手法の選択"
+        METHODS = ["harvest(default)", "dio+stonemask"]
+        PROMPT_COMBOBOX_LABEL = "プロンプトの選択"
+
+        converter_label = self.__create_label(
+            label_text = CONVERTER_LABEL,
+            font_size = CONVERTER_FONT_SIZE,
+            alignment = Qt.AlignCenter
+        )
+        convert_method_combobox_label = self.__create_label(text = METHOD_COMBOBOX_LABEL)
+        convert_method_combobox = self.__create_combobox(
+            items = METHODS,
+            connect_method = self.__update_convert_method
+        )
+        convert_button = self.__create_button(
+            text = "変換",
+            height = 50,
+            button_color = "blue",
+            text_color = "white",
+            connect_method = self.__start_converting
+        )
+        prompt_combobox_label = self.__create_label(text = PROMPT_COMBOBOX_LABEL)
+        prompt_combobox = self.__create_combobox(
+            items = ["default"],
+            connect_method = self.__update_convert_method
+        )
+        player_button = self.__create_button(
+            text = "再生",
+            height = 50,
+            button_color = "blue",
+            text_color = "white",
+            connect_method = self.__start_converting
+        )
+
+        self.layout_converter.addWidget(converter_label, alignment=Qt.AlignCenter)
+        self.layout_converter.addWidget(convert_method_combobox_label)
+        self.layout_converter.addWidget(convert_method_combobox)
+        self.layout_converter.addWidget(convert_button)
+        self.layout_converter.addWidget(prompt_combobox_label)
+        self.layout_converter.addWidget(prompt_combobox)
+        self.layout_converter.addWidget(player_button)
+        
+
+
+    def __update_convert_method(self) -> None:
+        pass
+
+    def __start_converting(self) -> None:
         pass
 
 
@@ -235,3 +289,13 @@ class MainApp(QWidget):
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
         return line
+    
+    @staticmethod
+    def __create_combobox(
+        items: list[str],
+        connect_method: callable
+    ) -> QComboBox:
+        combobox = QComboBox()
+        combobox.addItems(items)
+        combobox.activated.connect(connect_method)
+        return combobox
