@@ -188,5 +188,5 @@ class Wave2MidiConverter:
         self.bpm = bpm
 
 if __name__ == "__main__":
-    wave2midi = Wave2MidiConverter("resources/output.wav")
+    wave2midi = Wave2MidiConverter("resources/inputs/input.wav")
     wave2midi.create_midi()

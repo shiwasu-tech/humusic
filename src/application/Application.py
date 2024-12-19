@@ -44,7 +44,6 @@
 
 
 import sys
-import json
 from functools import partial
 from PySide6.QtWidgets import (
     QApplication,
@@ -60,10 +59,11 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 
-from AudioPlayer import play_audio
-from JSONLoader import load_json
 sys.path.append("src")
+sys.path.append("src/application")
 sys.path.append("src/hum2midi")
+from application.AudioPlayer import play_audio
+from application.JSONLoader import load_json
 from hum2midi.Recorder import Recorder
 from hum2midi.Wave2MidiConverter import Wave2MidiConverter
 from continuous_generator.Generator import generate_midi
