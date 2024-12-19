@@ -30,6 +30,27 @@
 #     - フォントサイズの変更
 #     - フォントの変更
 
+"""Shiwasuの実装部位"""
+# 3. play_midi
+#     - play_mid
+# _play_prompt_midi，_play_gen_midiに分割して実装
+
+# 5. update_prompt_midi
+#     - self.prompt_midiの宣言
+#     - self.prompt_midiの更新
+# 6. update_model
+#     - self.modelの更新
+#     - jsonの読み込み
+# 7. update_gen_midi
+#     - self.gen_midiの宣言
+#     - self.gen_midiの更新
+# load_jsonメソッドを作成して，keyをそれぞれ"model","prompt","generated"に指定することで，jsonファイルの読み込みを統一
+# 選択による更新のメソッドは分割して実装
+
+# 10. generate_continuation_midi
+#     - generate_midi?
+# generate_midi()の追加のみで実装
+
 """実装悩み中のメソッド"""
 # def toggle_sound(self):
 #     """録音ボタンの状態をトグルする"""
@@ -366,7 +387,7 @@ class MainApp(QWidget):
             text = "再生ファイル"
         )
         play_file_combobox = self.__init_combobox(
-            items = ["input.mid"],  # 仮置
+            items = self._load_json(index = "prompt"),
             connect_method = self.__update_prompt_midi
         )
         # 再生ボタンの設定
@@ -406,7 +427,7 @@ class MainApp(QWidget):
             text = "生成モデル"
         )
         model_combobox = self.__init_combobox(
-            items = ["lstmwithatt"],  # 仮置
+            items = self._load_json(index = "model"),
             connect_method = self.__update_model
         )
         # 生成ノーツ数のスライダーの設定
@@ -432,7 +453,7 @@ class MainApp(QWidget):
             text = "再生ファイル"
         )
         play_file_combobox = self.__init_combobox(
-            items = ["generated.mid"],  # 仮置
+            items = self._load_json(index = "generated"),
             connect_method = self.__update_gen_midi
         )
         # 再生ボタンの設定
@@ -602,6 +623,12 @@ class MainApp(QWidget):
         play_mid(self.gen_midi)
 
         self.__exit_process()
+
+    def _load_json(self, index: str):
+        with open('src/application/path_to_resources.json', 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            keys = [key for key in data[index]]
+            return keys
 
     def __update_method(self):
         pass
