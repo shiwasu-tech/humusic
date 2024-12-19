@@ -24,4 +24,3 @@ tqdm
 # used for application
 pygame
 PySide6
-playsound
