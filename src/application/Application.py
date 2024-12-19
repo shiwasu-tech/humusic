@@ -79,9 +79,9 @@ _MODEL_PATH = "resources/models/lstmwithatt_best.pt"
 _TOKENIZER_PATH = "resources/tokenizers/piano1_tokens/tokenizer.json"
 _GEN_MIDI_PATH = "resources/generated/generated_best.mid"
 
-_RESOURCE_PATH = "src/application/path_to_resources.json"
+_RESOURCE_PATH = "resources/path/path_to_resources.json"
 
-_LOGO_PATH = "src/application/logo_1.png"
+_LOGO_PATH = "resources/image/logo_1.png"
 
 _DEFAULT_REC_TIME = 5
 _DEFAULT_CONVERT_METHOD = "harvest"
