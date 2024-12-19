@@ -22,7 +22,7 @@
             "prompt_path" : "resources/prompts/better_prompt.mid"
         },
         "bach_850_piano1_only": {
-            "name" : "bach_850 piano1_only",
+            "name" : "bach_850_piano1_only",
             "prompt_path" : "resources/prompts/piano1_only_bach_850.mid"
         }
     },
