@@ -156,12 +156,15 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap
 
-from MidPlayer import play_mid
+from MidiPlayer import play_mid
+from JSONLoader import load_json
 sys.path.append("src")
 sys.path.append("src/hum2midi")
 from hum2midi.Recorder import Recorder
 from hum2midi.Wave2MidiConverter import Wave2MidiConverter
 from continuous_generator.Generator import generate_midi
+
+from icecream import ic
 
 _TITLE = "Humor"
 _SUBTITLE = "--HUMming cOntinuation generatoR--"
@@ -171,6 +174,8 @@ _PROMPT_MIDI_PATH = "resources/inputs/input.mid"
 _MODEL_PATH = "resources/models/lstmwithatt_best.pt"
 _TOKENIZER_PATH = "resources/tokenizers/piano1_tokens/tokenizer.json"
 _GEN_MIDI_PATH = "resources/generated/generated_best.mid"
+
+_RESOURCE_PATH = "src/application/path_to_resources.json"
 
 _LOGO_PATH = "src/application/logo_1.png"
 
@@ -327,6 +332,7 @@ class MainApp(QWidget):
     def __init_converter(self):
         # 定数の初期化
         HEAD_FONT_SIZE = 20
+        METHODS = ["harvest", "dio+stonemask"]
         # 大きめのラベルの設定
         head_label = self.__init_label(
             text = "変換",
@@ -338,7 +344,7 @@ class MainApp(QWidget):
             text = "ピッチ解析手法"
         )
         convert_method_combobox = self.__init_combobox(
-            items = ["harvest", "dio+stonemask"],  # 仮置
+            items = METHODS,
             connect_method = self.__update_method
         )
         # 変換ボタンの設定
@@ -378,10 +384,10 @@ class MainApp(QWidget):
 
 
     def __init_generator(self):
-        pass
         # 定数の初期化
         HEAD_FONT_SIZE = 20
         NOTE_NUM_RANGE = (100, 1000)
+        MODELS = load_json(_RESOURCE_PATH)["model"].keys()
         # 大きめのラベルの設定
         head_label = self.__init_label(
             text = "生成",
@@ -393,7 +399,7 @@ class MainApp(QWidget):
             text = "生成モデル"
         )
         model_combobox = self.__init_combobox(
-            items = ["lstmwithatt"],  # 仮置
+            items = MODELS,
             connect_method = self.__update_model
         )
         # 生成ノート数のスライダーの設定
@@ -576,17 +582,19 @@ class MainApp(QWidget):
         # 生成したmidiを再生する
         self.__exit_process()
 
-    def __update_method(self):
-        pass
+    def __update_method(self, index: int):
         # コンボボックスの選択肢をselfへ更新
+        self.convert_method = self.sender().itemText(index)
+        ic(self.convert_method)
 
     def __update_prompt_midi(self):
         pass
         # コンボボックスの選択肢をselfへ更新
 
     def __update_model(self):
-        pass
         # コンボボックスの選択肢をselfへ更新
+        self.model = self.sender().currentText()
+        ic(self.model)
 
     def __update_note_num(self, label: QLabel, value: int):
         # ラベルの更新

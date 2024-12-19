@@ -1,0 +1,1 @@
+# pygameのmixerモジュールを使ってwavファイルを再生
