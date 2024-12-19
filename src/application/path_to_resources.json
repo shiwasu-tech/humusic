@@ -15,7 +15,7 @@
     "prompt": {
         "current_recorded": {
             "name" : "current_recorded",
-            "prompt_path" : "inputs/input.mid"
+            "prompt_path" : "resources/inputs/input.mid"
         },
         "better_prompt": {
             "name" : "better_prompt",
