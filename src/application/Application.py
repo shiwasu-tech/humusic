@@ -153,7 +153,7 @@ from PySide6.QtWidgets import (
     QSlider,
     QComboBox
 )
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 
 from MidiPlayer import play_mid
@@ -182,8 +182,9 @@ _LOGO_PATH = "src/application/logo_1.png"
 _DEFAULT_REC_TIME = 5
 _DEFAULT_CONVERT_METHOD = "harvest"
 _DEFAULT_PROMPT = "current_recorded"
-_DEFAULT_MODEL = "lstmwithatt"
+_DEFAULT_MODEL = "LSTMwithAtt_best"
 _DEFAULT_NOTE_NUM = 500
+_DEFAULT_GEN_MIDI = "current_generated"
 
 class MainApp(QWidget):
     def __init__(self):
@@ -194,6 +195,7 @@ class MainApp(QWidget):
         self.prompt = _DEFAULT_PROMPT
         self.model = _DEFAULT_MODEL
         self.note_num = _DEFAULT_NOTE_NUM
+        self.gen_midi = _GEN_MIDI_PATH
         # メソッド多重呼び出し防止フラグ
         self.is_processing = False
         # layoutのインスタンスオブジェクトを生成
@@ -266,8 +268,6 @@ class MainApp(QWidget):
         # layoutを改行してからlineを追加
         self.top_layout.addStretch()
         self.top_layout.addWidget(line)
-
-
 
 
     def __init_body(self):
@@ -392,6 +392,7 @@ class MainApp(QWidget):
         HEAD_FONT_SIZE = 20
         NOTE_NUM_RANGE = (100, 1000)
         MODELS = load_json(_RESOURCE_PATH)["model"].keys()
+        GEN_MIDI = load_json(_RESOURCE_PATH)["generated"].keys()
         # 大きめのラベルの設定
         head_label = self.__init_label(
             text = "生成",
@@ -428,7 +429,7 @@ class MainApp(QWidget):
             text = "再生ファイル"
         )
         play_file_combobox = self.__init_combobox(
-            items = ["generated.mid"],  # 仮置
+            items = GEN_MIDI,
             connect_method = self.__update_gen_midi
         )
         # 再生ボタンの設定
@@ -556,8 +557,12 @@ class MainApp(QWidget):
     def __record_wave(self):
         if self.__check_processing():
             return
-        # 録音を行う
-        # selfから録音時間を取得
+        recorder = Recorder(
+            record_sec = self.rec_time,
+            output_path = _WAVE_PATH
+        )
+        recorder.record()
+        del recorder
         self.__exit_process()
 
 
@@ -566,6 +571,13 @@ class MainApp(QWidget):
             return
         # 変換を行う
         # selfから変換手法を取得
+        converter = Wave2MidiConverter(
+            wave_path = _WAVE_PATH,
+            method = self.convert_method,
+            output_path = _PROMPT_MIDI_PATH
+        )
+        converter.create_midi()
+        del converter
         self.__exit_process()
 
 
@@ -574,6 +586,15 @@ class MainApp(QWidget):
             return
         # 生成を行う
         # selfから生成モデルを取得
+        path_json = load_json(_RESOURCE_PATH)
+        models = path_json["model"]
+        prompts = path_json["prompt"]
+        generate_midi(
+            model_path = models[self.model]["model_path"],
+            tokenizer_path = models[self.model]["tokenizer_path"],
+            prompt_path = prompts[self.prompt]["prompt_path"],
+            generation_length = self.note_num
+        )
         self.__exit_process()
 
 
@@ -617,8 +638,9 @@ class MainApp(QWidget):
 
 
     def __update_gen_midi(self):
-        pass
         # コンボボックスの選択肢をselfへ更新
+        self.gen_midi = self.sender().currentText()
+        ic(self.gen_midi)
 
 
     def __check_processing(self) -> bool:

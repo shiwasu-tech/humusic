@@ -22,7 +22,7 @@ generation_length = 500
 #ベクトル表示の非短縮設定
 torch.set_printoptions(edgeitems=torch.inf)
 
-def generate_midi(model_path, tokenizer_path, prompt_path, generation_length)->str:
+def generate_midi(model_path, tokenizer_path, prompt_path, generation_length):
     #device setting
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -87,8 +87,5 @@ def generate_midi(model_path, tokenizer_path, prompt_path, generation_length)->s
 
     generated.dump_midi(genarated_midi)
 
-    return genarated_midi
-
 if __name__ == "__main__":
-    file_path = generate_midi(model_path, tokenizer_path, prompt_path, generation_length)
-    print(file_path)
+    generate_midi(model_path, tokenizer_path, prompt_path, generation_length)
