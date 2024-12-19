@@ -178,6 +178,12 @@ _DEFAULT_REC_TIME = 5
 _DEFAULT_CONVERT_METHOD = "harvest"
 _DEFAULT_NOTE_NUM = 500
 
+_BACKGROUND_COLOR = "black"
+_RECORDER_COLOR = "#d65f55"
+_PLAYER_COLOR = "#163054"
+_CONVERTER_COLOR = "#da9c3d"
+_GENERATOR_COLOR = "#92d787"
+
 class MainApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -305,7 +311,8 @@ class MainApp(QWidget):
         )
         rec_button = self.__init_button(
             text = "録音",
-            connect_method = self.__record_wave
+            connect_method = self.__record_wave,
+            background_color = _RECORDER_COLOR
         )
         # 再生ボタンの設定
         play_button_label = self.__init_label(
@@ -313,7 +320,8 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_wave
+            connect_method = self.__play_wave,
+            background_color = _PLAYER_COLOR
         )
 
         self.recorder_layout.addWidget(head_label)
@@ -347,7 +355,8 @@ class MainApp(QWidget):
         )
         convert_button = self.__init_button(
             text = "変換",
-            connect_method = self.__convert_wave_to_midi
+            connect_method = self.__convert_wave_to_midi,
+            background_color = _CONVERTER_COLOR
         )
         # 再生ファイル選択コンボボックスの設定
         play_file_label = self.__init_label(
@@ -363,7 +372,8 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_midi
+            connect_method = self.__play_midi,
+            background_color = _PLAYER_COLOR
         )
 
         self.converter_layout.addWidget(head_label)
@@ -411,7 +421,8 @@ class MainApp(QWidget):
         )
         generate_button = self.__init_button(
             text = "生成",
-            connect_method = self.__generate_continuation_midi
+            connect_method = self.__generate_continuation_midi,
+            background_color = _GENERATOR_COLOR
         )
         # 再生ファイル選択コンボボックスの設定
         play_file_label = self.__init_label(
@@ -427,7 +438,8 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_midi
+            connect_method = self.__play_midi,
+            background_color = _PLAYER_COLOR
         )
         
         self.generator_layout.addWidget(head_label)
