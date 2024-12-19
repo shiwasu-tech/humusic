@@ -232,7 +232,7 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = partial(self.__play_audio, _WAVE_PATH),
+            connect_method = self.__play_recorded,
             background_color = _PLAYER_COLOR
         )
 
@@ -286,10 +286,7 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = partial(
-                self.__play_audio,
-                load_json(_RESOURCE_PATH)["prompt"][self.prompt]["prompt_path"]
-            ),
+            connect_method = self.__play_prompt,
             background_color = _PLAYER_COLOR
         )
 
@@ -356,10 +353,7 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = partial(
-                self.__play_audio,
-                load_json(_RESOURCE_PATH)["generated"][self.gen_midi]["midi_path"]
-            ),
+            connect_method = self.__play_generated,
             background_color = _PLAYER_COLOR
         )
         
@@ -519,11 +513,29 @@ class MainApp(QWidget):
         )
         self.__exit_process()
 
-    def __play_audio(self, path: str):
+
+    def __play_recorded(self):
         if self.__check_processing():
             return
-        # wavファイルやmidiファイルを再生する
-        play_audio(path)
+        play_audio(_WAVE_PATH)
+        self.__exit_process()
+
+
+    def __play_prompt(self):
+        if self.__check_processing():
+            return
+        play_audio(
+            load_json(_RESOURCE_PATH)["prompt"][self.prompt]["prompt_path"]
+        )
+        self.__exit_process()
+
+
+    def __play_generated(self):
+        if self.__check_processing():
+            return
+        play_audio(
+            load_json(_RESOURCE_PATH)["generated"][self.gen_midi]["midi_path"]
+        )
         self.__exit_process()
 
 
