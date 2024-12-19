@@ -187,11 +187,14 @@ _GENERATOR_COLOR = "#92d787"
 class MainApp(QWidget):
     def __init__(self):
         super().__init__()
-        # 秒数、変換手法、生成モデルを保持するインスタンス変数
+        # 秒数、変換手法、プロンプトのパス、生成モデルのパス，トークナイザーのパス、生成ノーツ数、生成midiのパスを保持するインスタンス変数
         self.rec_time = _DEFAULT_REC_TIME
         self.convert_method = _DEFAULT_CONVERT_METHOD
-        self.model = ""
+        self.prompt = _PROMPT_MIDI_PATH
+        self.model = _MODEL_PATH
+        self.tokenizer = _TOKENIZER_PATH
         self.note_num = _DEFAULT_NOTE_NUM
+        self.gen_midi = _GEN_MIDI_PATH
         # メソッド多重呼び出し防止フラグ
         self.is_processing = False
         # layoutのインスタンスオブジェクトを生成
@@ -372,7 +375,7 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_midi,
+            connect_method = self.__play_prompt_midi,
             background_color = _PLAYER_COLOR
         )
 
@@ -406,9 +409,9 @@ class MainApp(QWidget):
             items = ["lstmwithatt"],  # 仮置
             connect_method = self.__update_model
         )
-        # 生成ノート数のスライダーの設定
+        # 生成ノーツ数のスライダーの設定
         generate_note_label = self.__init_label(
-            text = f"生成ノート数: {_DEFAULT_NOTE_NUM}"
+            text = f"生成ノーツ数: {_DEFAULT_NOTE_NUM}"
         )
         generate_note_slider = self.__init_slider(
             range = NOTE_NUM_RANGE,
@@ -438,7 +441,7 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_midi,
+            connect_method = self.__play_gen_midi,
             background_color = _PLAYER_COLOR
         )
         
@@ -574,6 +577,8 @@ class MainApp(QWidget):
             return
         # 生成を行う
         # selfから生成モデルを取得
+        generate_midi(self.model, self.tokenizer, self.prompt, self.note_num)
+
         self.__exit_process()
 
     def __play_wave(self):
@@ -582,10 +587,20 @@ class MainApp(QWidget):
         # 録音した音声を再生する
         self.__exit_process()
 
-    def __play_midi(self):
+    def __play_prompt_midi(self):
+        if self.__check_processing():
+            return
+        # 変換したmidi、プロンプトのmidiを再生する
+        play_mid(self.prompt)
+
+        self.__exit_process()
+
+    def __play_gen_midi(self):
         if self.__check_processing():
             return
         # 生成したmidiを再生する
+        play_mid(self.gen_midi)
+
         self.__exit_process()
 
     def __update_method(self):
@@ -603,7 +618,7 @@ class MainApp(QWidget):
     def __update_note_num(self, label: QLabel, value: int):
         # ラベルの更新
         # valueはスライダーの値
-        label.setText(f"生成ノート数: {value}")
+        label.setText(f"生成ノーツ数: {value}")
         self.note_num = value
 
     def __update_gen_midi(self):
