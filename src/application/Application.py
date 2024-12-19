@@ -127,7 +127,7 @@ class MainApp(QWidget):
         WINDOW_X = 100
         WINDOW_Y = 100
         WINDOW_WIDTH = 800
-        WINDOW_HEIGHT = 450
+        WINDOW_HEIGHT = 460
         # ウインドウの設定
         self.setWindowTitle(_TITLE)
         self.setGeometry(
@@ -237,10 +237,13 @@ class MainApp(QWidget):
         )
 
         self.recorder_layout.addWidget(head_label)
+        self.recorder_layout.addStretch(25)
         self.recorder_layout.addWidget(rec_time_label)
         self.recorder_layout.addWidget(rec_time_slider)
+        self.recorder_layout.addStretch(25)
         self.recorder_layout.addWidget(rec_button_label)
         self.recorder_layout.addWidget(rec_button)
+        self.recorder_layout.addStretch(75)
         self.recorder_layout.addWidget(play_button_label)
         self.recorder_layout.addWidget(play_button)
 
@@ -291,10 +294,13 @@ class MainApp(QWidget):
         )
 
         self.converter_layout.addWidget(head_label)
+        self.converter_layout.addStretch(25)
         self.converter_layout.addWidget(convert_method_label)
         self.converter_layout.addWidget(convert_method_combobox)
+        self.converter_layout.addStretch(25)
         self.converter_layout.addWidget(convert_button_label)
         self.converter_layout.addWidget(convert_button)
+        self.converter_layout.addStretch(25)
         self.converter_layout.addWidget(play_file_label)
         self.converter_layout.addWidget(play_file_combobox)
         self.converter_layout.addWidget(play_button_label)
@@ -323,7 +329,7 @@ class MainApp(QWidget):
         )
         # 生成ノート数のスライダーの設定
         generate_note_label = self.__init_label(
-            text = f"生成ノート数: {_DEFAULT_NOTE_NUM}"
+            text = f"生成ノーツ数: {_DEFAULT_NOTE_NUM}"
         )
         generate_note_slider = self.__init_slider(
             range = NOTE_NUM_RANGE,
@@ -364,6 +370,7 @@ class MainApp(QWidget):
         self.generator_layout.addWidget(generate_note_slider)
         self.generator_layout.addWidget(generate_button_label)
         self.generator_layout.addWidget(generate_button)
+        self.generator_layout.addStretch(25)
         self.generator_layout.addWidget(play_file_label)
         self.generator_layout.addWidget(play_file_combobox)
         self.generator_layout.addWidget(play_button_label)
