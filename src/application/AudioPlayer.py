@@ -1,5 +1,6 @@
 # pygameのmixerモジュールを使ってwavファイルを再生
 import pygame
+from Getch import Getch
 
 def play_audio(file_path: str):
     VOLUME = 1.0
@@ -8,9 +9,13 @@ def play_audio(file_path: str):
     pygame.mixer.music.set_volume(VOLUME)
     pygame.mixer.music.play()
 
+    getch = Getch()
     while pygame.mixer.music.get_busy():
         pygame.time.Clock().tick(10)
 
+        if getch.getch_or_pass() == 'q':
+            pygame.mixer.music.stop()
+            break
     pygame.quit()
 
 if __name__ == "__main__":
