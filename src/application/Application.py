@@ -232,7 +232,7 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = partial(self.__play_audio, _WAVE_PATH)
+            connect_method = partial(self.__play_audio, _WAVE_PATH),
             background_color = _PLAYER_COLOR
         )
 
@@ -288,8 +288,8 @@ class MainApp(QWidget):
             text = "再生",
             connect_method = partial(
                 self.__play_audio,
-                load_json(_RESOURCE_PATH)["prompt"][self.prompt]["prompt_path"]    
-            )
+                load_json(_RESOURCE_PATH)["prompt"][self.prompt]["prompt_path"]
+            ),
             background_color = _PLAYER_COLOR
         )
 
@@ -359,7 +359,7 @@ class MainApp(QWidget):
             connect_method = partial(
                 self.__play_audio,
                 load_json(_RESOURCE_PATH)["generated"][self.gen_midi]["midi_path"]
-            )
+            ),
             background_color = _PLAYER_COLOR
         )
         
