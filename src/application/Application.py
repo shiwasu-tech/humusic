@@ -1,27 +1,6 @@
 """未実装の機能等"""
 # 1. bottom_layout, __init_bottom
 #     - メッセージの表示
-# 2. play_wave
-#     - playsound
-# 3. play_midi
-#     - play_mid
-# 4. update_method
-#     - self.convert_methodの更新
-# 5. update_prompt
-#     - self.promptの宣言
-#     - self.promptの更新
-# 6. update_model
-#     - self.modelの更新
-#     - jsonの読み込み
-# 7. update_gen_midi
-#     - self.gen_midiの宣言
-#     - self.gen_midiの更新
-# 8. record_wave
-#     - Recorder
-# 9. convert_wave_to_midi
-#     - Wave2MidiConverter
-# 10. generate_continuation_midi
-#     - generate_midi?
 # 11. docstringの追加とコメントアウトの整備
 # 12. UIの整備
 #     - レイアウトの整理
@@ -46,15 +25,6 @@
 #         self.record_button.setText("開始")
 #         self.record_label.setText("録音: 録音可能")
 
-# ## プロンプトの選択肢のロード
-# # リスト形式で選択肢を取得するメソッドに変更するかも
-# def load_prompt(self):
-#     """JSONファイルからプロンプトを読み込む"""
-#     with open('src/application/path_to_resources.json', 'r', encoding='utf-8') as file:
-#         data = json.load(file)
-#         prompt_key = [key for key in data["prompt"]]
-#         self.prompt_combobox.addItems(prompt_key)
-
 # ## プロンプト選択の処理
 # def on_prompt_selected(self, text):
 #     """プロンプトが選択されたときに呼び出される"""
@@ -62,56 +32,6 @@
 #         data = json.load(file)
 #         self.prompt_path = data["prompt"][self.prompt_combobox.currentText()]["prompt_path"]
 #     self.prompt_play_label.setText("プロンプト再生: 再生可能")
-
-# ## モデルの選択肢のロード
-# # リスト形式で選択肢を取得するメソッドに変更するかも
-# def load_models(self):
-#     """JSONファイルからモデルを読み込む"""
-#     with open('src/application/path_to_resources.json', 'r', encoding='utf-8') as file:
-#         data = json.load(file)
-#         model_key = [key for key in data["model"]]
-#         self.model_combobox.addItems(model_key)
-
-# ## モデル選択の処理
-# # モデルのパスを取得するメソッドに変更するかも
-# def on_model_selected(self, text):
-#     """モデルが選択されたときに呼び出される"""
-#     with open('src/application/path_to_resources.json', 'r', encoding='utf-8') as file:
-#         data = json.load(file)
-#         self.model_path = data["model"][self.model_combobox.currentText()]["model_path"]
-#         self.tokenizer_path = data["model"][self.model_combobox.currentText()]["tokenizer_path"]
-#     print(self.model_path,self.tokenizer_path)
-
-# ## 生成ボタンが押されたときの処理
-# # メソッド自体は新しく作成済み。参考のため置いておく
-# def start_generation(self):
-#     """生成ボタンが押されたときの処理"""
-#     if self.generate_button.text() == "生成":
-#         self.generate_button.setText("生成中...")
-#         self.generate_button.setStyleSheet("background-color: red; color: white;")
-        
-#         generate_midi(self.model_path, self.tokenizer_path, self.prompt_path, self.generate_notes)
-#         self.generate_button.setText("生成")
-#         self.generate_button.setStyleSheet("background-color: orange; color: white;")
-        
-#     else:
-#         self.generate_button.setText("生成")
-#         self.generate_button.setStyleSheet("background-color: orange; color: white;")
-        
-    
-#     self.status_label.setText("Status: 生成中...")
-#     self.status_label.setText(f"Status: {self.model_combobox.currentText()}で{self.prompt_combobox.currentText()}の続きを生成しました。")
-#     print(self.model_path, self.tokenizer_path, self.prompt_path)
-
-# # 再生部分
-# # 参考のため置いておく
-# ## 生成した続きの選択肢のロード
-# def load_generated(self):
-#     """JSONファイルから生成した続きを読み込む"""
-#     with open('src/application/path_to_resources.json', 'r', encoding='utf-8') as file:
-#         data = json.load(file)
-#         generated_key = [key for key in data["generated"]]
-#         self.generated_combobox.addItems(generated_key)
 
 # ## 生成した続きの選択の処理
 # # 日本語がよくわからないが、参考のため置いておく
@@ -122,22 +42,6 @@
 #         self.gen_midi_path = data["generated"][self.generated_combobox.currentText()]["midi_path"]
 #     self.generated_label.setText("生成した続きの再生: 再生可能")
 
-# ## 続きの再生ボタンが押されたときの処理
-# # 参考のため置いておく
-# def play_generated(self):
-#     """続きの再生ボタンが押されたときの処理"""
-#     if self.generated_label.text() == "生成した続きの再生: 再生可能":
-#         self.generated_label.setText("生成した続きの再生: 再生中")
-#         self.generated_play_button.setText("再生中...")
-#         self.status_label.setText("Status: 再生中... ターミナルでqを入力すると停止します.")
-        
-#         play_mid(self.gen_midi_path)
-#         self.generated_play_button.setText("もう一度再生")
-#         self.generated_label.setText("生成した続きの再生: 再生完了")
-#         self.status_label.setText("Status: 再生完了")
-        
-#     else:
-#         self.generated_label.setText("生成した続きの再生: 再生可能")
 
 import sys
 import json
@@ -156,7 +60,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 
-from MidiPlayer import play_mid
+from AudioPlayer import play_audio
 from JSONLoader import load_json
 sys.path.append("src")
 sys.path.append("src/hum2midi")
@@ -195,7 +99,7 @@ class MainApp(QWidget):
         self.prompt = _DEFAULT_PROMPT
         self.model = _DEFAULT_MODEL
         self.note_num = _DEFAULT_NOTE_NUM
-        self.gen_midi = _GEN_MIDI_PATH
+        self.gen_midi = _DEFAULT_GEN_MIDI
         # メソッド多重呼び出し防止フラグ
         self.is_processing = False
         # layoutのインスタンスオブジェクトを生成
@@ -321,7 +225,7 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_wave
+            connect_method = partial(self.__play_audio, _WAVE_PATH)
         )
 
         self.recorder_layout.addWidget(head_label)
@@ -373,7 +277,10 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_midi
+            connect_method = partial(
+                self.__play_audio,
+                load_json(_RESOURCE_PATH)["prompt"][self.prompt]["prompt_path"]    
+            )
         )
 
         self.converter_layout.addWidget(head_label)
@@ -438,7 +345,10 @@ class MainApp(QWidget):
         )
         play_button = self.__init_button(
             text = "再生",
-            connect_method = self.__play_midi
+            connect_method = partial(
+                self.__play_audio,
+                load_json(_RESOURCE_PATH)["generated"][self.gen_midi]["midi_path"]
+            )
         )
         
         self.generator_layout.addWidget(head_label)
@@ -597,18 +507,11 @@ class MainApp(QWidget):
         )
         self.__exit_process()
 
-
-    def __play_wave(self):
+    def __play_audio(self, path: str):
         if self.__check_processing():
             return
-        # 録音した音声を再生する
-        self.__exit_process()
-
-
-    def __play_midi(self):
-        if self.__check_processing():
-            return
-        # 生成したmidiを再生する
+        # wavファイルやmidiファイルを再生する
+        play_audio(path)
         self.__exit_process()
 
 
