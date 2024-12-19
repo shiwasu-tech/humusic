@@ -228,7 +228,7 @@ class MainApp(QWidget):
         )
         # 再生ボタンの設定
         play_button_label = self.__init_label(
-            text = "再生ボタン"
+            text = "再生ボタン (Qで停止)"
         )
         play_button = self.__init_button(
             text = "再生",
@@ -282,7 +282,7 @@ class MainApp(QWidget):
         )
         # 再生ボタンの設定
         play_button_label = self.__init_label(
-            text = "再生ボタン"
+            text = "再生ボタン (Qで停止)"
         )
         play_button = self.__init_button(
             text = "再生",
@@ -349,7 +349,7 @@ class MainApp(QWidget):
         )
         # 再生ボタンの設定
         play_button_label = self.__init_label(
-            text = "再生ボタン"
+            text = "再生ボタン (Qで停止)"
         )
         play_button = self.__init_button(
             text = "再生",
