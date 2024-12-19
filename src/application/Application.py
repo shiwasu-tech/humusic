@@ -7,9 +7,9 @@
 #     - play_mid
 # 4. update_method
 #     - self.convert_methodの更新
-# 5. update_prompt_midi
-#     - self.prompt_midiの宣言
-#     - self.prompt_midiの更新
+# 5. update_prompt
+#     - self.promptの宣言
+#     - self.promptの更新
 # 6. update_model
 #     - self.modelの更新
 #     - jsonの読み込み
@@ -181,6 +181,8 @@ _LOGO_PATH = "src/application/logo_1.png"
 
 _DEFAULT_REC_TIME = 5
 _DEFAULT_CONVERT_METHOD = "harvest"
+_DEFAULT_PROMPT = "current_recorded"
+_DEFAULT_MODEL = "lstmwithatt"
 _DEFAULT_NOTE_NUM = 500
 
 class MainApp(QWidget):
@@ -189,7 +191,8 @@ class MainApp(QWidget):
         # 秒数、変換手法、生成モデルを保持するインスタンス変数
         self.rec_time = _DEFAULT_REC_TIME
         self.convert_method = _DEFAULT_CONVERT_METHOD
-        self.model = ""
+        self.prompt = _DEFAULT_PROMPT
+        self.model = _DEFAULT_MODEL
         self.note_num = _DEFAULT_NOTE_NUM
         # メソッド多重呼び出し防止フラグ
         self.is_processing = False
@@ -333,6 +336,7 @@ class MainApp(QWidget):
         # 定数の初期化
         HEAD_FONT_SIZE = 20
         METHODS = ["harvest", "dio+stonemask"]
+        PROMPTS = load_json(_RESOURCE_PATH)["prompt"].keys()
         # 大きめのラベルの設定
         head_label = self.__init_label(
             text = "変換",
@@ -360,8 +364,8 @@ class MainApp(QWidget):
             text = "再生ファイル"
         )
         play_file_combobox = self.__init_combobox(
-            items = ["input.mid"],  # 仮置
-            connect_method = self.__update_prompt_midi
+            items = PROMPTS,
+            connect_method = self.__update_prompt
         )
         # 再生ボタンの設定
         play_button_label = self.__init_label(
@@ -556,12 +560,14 @@ class MainApp(QWidget):
         # selfから録音時間を取得
         self.__exit_process()
 
+
     def __convert_wave_to_midi(self):
         if self.__check_processing():
             return
         # 変換を行う
         # selfから変換手法を取得
         self.__exit_process()
+
 
     def __generate_continuation_midi(self):
         if self.__check_processing():
@@ -570,11 +576,13 @@ class MainApp(QWidget):
         # selfから生成モデルを取得
         self.__exit_process()
 
+
     def __play_wave(self):
         if self.__check_processing():
             return
         # 録音した音声を再生する
         self.__exit_process()
+
 
     def __play_midi(self):
         if self.__check_processing():
@@ -582,25 +590,31 @@ class MainApp(QWidget):
         # 生成したmidiを再生する
         self.__exit_process()
 
+
     def __update_method(self, index: int):
         # コンボボックスの選択肢をselfへ更新
         self.convert_method = self.sender().itemText(index)
         ic(self.convert_method)
 
-    def __update_prompt_midi(self):
-        pass
+
+    def __update_prompt(self):
         # コンボボックスの選択肢をselfへ更新
+        self.prompt = self.sender().currentText()
+        ic(self.prompt)
+
 
     def __update_model(self):
         # コンボボックスの選択肢をselfへ更新
         self.model = self.sender().currentText()
         ic(self.model)
 
+
     def __update_note_num(self, label: QLabel, value: int):
         # ラベルの更新
         # valueはスライダーの値
         label.setText(f"生成ノート数: {value}")
         self.note_num = value
+
 
     def __update_gen_midi(self):
         pass
@@ -614,6 +628,7 @@ class MainApp(QWidget):
             self.is_processing = True
             return False
         
+
     def __exit_process(self):
         self.is_processing = False
 
