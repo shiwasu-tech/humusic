@@ -1,6 +1,8 @@
 # pygameのmixerモジュールを使ってwavファイルを再生
 import pygame
-from Getch import Getch
+import sys
+sys.path.append("src/application")
+from src.application.Getch import Getch
 
 def play_audio(file_path: str):
     VOLUME = 1.0

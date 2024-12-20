@@ -1,6 +1,8 @@
 import numpy as np
+import sys
 from mido import MidiFile, MidiTrack, Message, MetaMessage, bpm2tempo
-from WaveAnalyzer import WaveAnalyzer
+sys.path.append("src/hum2midi")
+from src.hum2midi.WaveAnalyzer import WaveAnalyzer
 
 class Wave2MidiConverter:
     """録音した音声データをMIDIデータに変換するクラス

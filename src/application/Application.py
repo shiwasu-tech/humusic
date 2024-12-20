@@ -62,11 +62,12 @@ from PySide6.QtGui import QPixmap
 sys.path.append("src")
 sys.path.append("src/application")
 sys.path.append("src/hum2midi")
-from application.AudioPlayer import play_audio
-from application.JSONLoader import load_json
-from hum2midi.Recorder import Recorder
-from hum2midi.Wave2MidiConverter import Wave2MidiConverter
-from continuous_generator.Generator import generate_midi
+sys.path.append("src/continuous_generator")
+from src.application.AudioPlayer import play_audio
+from src.application.JSONLoader import load_json
+from src.hum2midi.Recorder import Recorder
+from src.hum2midi.Wave2MidiConverter import Wave2MidiConverter
+from src.continuous_generator.Generator import generate_midi
 
 from icecream import ic
 
