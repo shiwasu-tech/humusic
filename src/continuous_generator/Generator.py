@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from miditok import REMI
 
 sys.path.append("src/continuous_generator")
-from LSTMwithAtt import LSTMwithAtt
+from src.continuous_generator.LSTMwithAtt import LSTMwithAtt
 
 '''
 jsonからロード
