@@ -57,7 +57,7 @@ from PySide6.QtWidgets import (
     QComboBox
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap, QIcon
 
 sys.path.append("src")
 sys.path.append("src/application")
@@ -82,6 +82,7 @@ _GEN_MIDI_PATH = "resources/generated/generated_best.mid"
 _RESOURCE_PATH = "resources/path/path_to_resources.json"
 
 _LOGO_PATH = "resources/image/logo_1.png"
+_ICON_PATH = "resources/image/logo_icon.ico"
 
 _DEFAULT_REC_TIME = 5
 _DEFAULT_CONVERT_METHOD = "harvest"
@@ -117,6 +118,8 @@ class MainApp(QWidget):
         self.recorder_layout = QVBoxLayout()
         self.converter_layout = QVBoxLayout()
         self.generator_layout = QVBoxLayout()
+        # ウインドウアイコンの設定
+        self.setWindowIcon(QIcon(_ICON_PATH))
         # uiの初期化
         self.__init_UI()
 
@@ -591,6 +594,7 @@ class MainApp(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(_ICON_PATH))
     main_app = MainApp()
     main_app.show()
     sys.exit(app.exec())
