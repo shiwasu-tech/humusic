@@ -1,0 +1,8 @@
+/temp_models/*
+/midi_chunk/*
+/tokenizers/*
+/generated/*
+/prompt/*
+/dataset/*
+
+datasets_path.json

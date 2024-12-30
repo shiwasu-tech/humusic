@@ -1,0 +1,52 @@
+{   
+    "model": {
+        "LSTMwithAtt_best": {
+            "name" : "LSTMwithAtt_best",
+            "model_path" : "resources/models/lstmwithatt_best.pt",
+            "tokenizer_path" : "resources/tokenizers/piano1_token_1/tokenizer.json"
+        },
+        "LSTMwithAtt_better": {
+            "name" : "LSTMwithAtt_better",
+            "model_path" : "resources/models/lstmwithatt_better.pt",
+            "tokenizer_path" : "resources/tokenizers/piano1_token_2/tokenizer.json"
+        }   
+    },
+
+    "prompt": {
+        "current_recorded": {
+            "name" : "current_recorded",
+            "prompt_path" : "resources/inputs/input.mid"
+        },
+        "better_prompt": {
+            "name" : "better_prompt",
+            "prompt_path" : "resources/prompts/better_prompt.mid"
+        },
+        "bach_850_piano1_only": {
+            "name" : "bach_850_piano1_only",
+            "prompt_path" : "resources/prompts/piano1_only_bach_850.mid"
+        }
+    },
+
+    "generated": {
+        "current_generated": {
+            "name" : "current_generated",
+            "midi_path" : "resources/generated/generated.mid"
+        },
+        "best_generated_1": {
+            "name" : "generated_best_1",
+            "midi_path" : "resources/generated/generated_best_1.mid"
+        },
+        "best_generated_2": {
+            "name" : "generated_best_2",
+            "midi_path" : "resources/generated/generated_best_2.mid"
+        },
+        "better_generated": {
+            "name" : "generated_better",
+            "midi_path" : "resources/generated/generated_better.mid"
+        },
+        "soso_generated": {
+            "name" : "generated_soso",
+            "midi_path" : "resources/generated/generated_soso.mid"
+        }
+    }
+}

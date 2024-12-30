@@ -1,14 +1,26 @@
-numpy 
+numpy == 1.26.4
 matplotlib
 
 
 mido
 miditok
 
-pygame
+# used for hum2midi
+pyaudio
+pyworld
+setuptools
+librosa
+scipy
 
+# used for continuous_generator
 torch
 torchaudio
 torchvision
 
 transformers
+
+tqdm
+
+# used for application
+pygame
+PySide6
